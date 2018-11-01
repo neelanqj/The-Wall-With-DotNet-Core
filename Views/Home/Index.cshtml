@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<form action="/createmessage" method="POST">
+    <div class="row">
+        <div class="col-md-12">
+            <textarea name="content"></textarea>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8"></div>
+        <div class="col-md-4">
+            <input class="btn btn-primary" type="submit" value="Post a Message">
+        </div>
+    </div>
+</form>
+
+@foreach(Message message in @Model) {
+    @:<div class="row">
+        @:<div class="col-md-10">
+            @message.Content
+        @:</div>
+    @:</div>
+    @foreach(Comment comment in @message.Comments) {
+        @:<div class="row">
+            @:<div class="col-md-2"></div>
+            @:<div class="col-md-8">
+                @comment.Content
+            @:</div>
+        @:</div>
+    }
+    @:<form action="/createcomment" method="POST">
+        @:<div class="row">
+            @:<div class="col-md-2"></div>
+            @:<div class="col-md-8">
+                @:Post a comment:<br/>
+                @:<textarea name="content"></textarea>
+            @:</div>
+        @:</div>
+            @:<div class="row">
+            @:<div class="col-md-8"></div>
+            @:<div class="col-md-2">
+                @:<input type="hidden" name="MessageId" value="@message.MessageId" />
+                @:<input type="submit" class="btn btn-success" value="Post a comment">
+            @:</div>
+        @:</div>
+    @:</form>
+}
