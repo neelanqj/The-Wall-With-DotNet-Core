@@ -11,8 +11,11 @@ namespace Extensions.Authentication
 {
     public class AuthenticationController : Controller
     {
+        private const string mainPortal = "/wall";
+        private const string loginPage ="/";
         private MyDbContext _dbContext;
         private UserSessionWrapper _USW;
+
         
         public AuthenticationController(MyDbContext context){
             _dbContext=context;
@@ -21,9 +24,42 @@ namespace Extensions.Authentication
 
         [HttpGet]
         [Route("/")]
-        public IActionResult Login(){
+        public IActionResult Index(){
             return View();
         }
+
+
+        [HttpPost]
+        [Route("/register")]
+        public IActionResult Register(User user)
+        {
+            // Check initial ModelState
+            if(ModelState.IsValid)
+            {
+                // If a User exists with provided email
+                if(_dbContext.Users.Any(u => u.Email == user.Email))
+                {
+                    // Manually add a ModelState error to the Email field, with provided
+                    // error message
+                    ModelState.AddModelError("Email", "Email already in use!");
+                    
+                    // You may consider returning to the View at this point
+                    return View();
+                }
+
+                PasswordHasher<User> Hasher = new PasswordHasher<User>();
+                user.Password = Hasher.HashPassword(user, user.Password);
+                User newUser =_dbContext.Add(user).Entity;
+                _dbContext.SaveChanges();
+
+                _USW.SetSessionUser(newUser.UserId);
+                
+                return Redirect(mainPortal);
+            }
+
+            // other code
+            return View();
+        } 
 
         [HttpPost]
         [Route("/login")]
@@ -35,7 +71,7 @@ namespace Extensions.Authentication
                 if(userInDb == null || userSubmission.Password == null)
                 {
                     ModelState.AddModelError("Email", "Invalid Email/Password");
-                    return View("Index");
+                    return View(loginPage);
                 }
                 
                 // Initialize hasher object
@@ -48,21 +84,21 @@ namespace Extensions.Authentication
                 if(result == 0)
                 {
                     ModelState.AddModelError("Password", "Invalid Email/Password");
-                    return View("Index");
+                    return View(loginPage);
                 }
                 
                 HttpContext.Session.SetInt32("User", userInDb.UserId);
-                return Redirect("/dashboard");
+                return Redirect(mainPortal);
             }
 
-            return View("Index");
+            return View(loginPage);
         }
 
         [Route("/logout")]
         [ServiceFilter(typeof(LoggedInAttribute))]
         public IActionResult Logout(){
             HttpContext.Session.Remove("User");
-            return Redirect("/login");
+            return Redirect(loginPage);
         }
         
     }

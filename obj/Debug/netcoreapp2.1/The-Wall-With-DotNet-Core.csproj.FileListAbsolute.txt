@@ -29,3 +29,4 @@ C:\Storage\C\The-Wall-With-DotNet-Core\bin\Debug\netcoreapp2.1\The-Wall-With-Dot
 C:\Storage\C\The-Wall-With-DotNet-Core\bin\Debug\netcoreapp2.1\The-Wall-With-DotNet-Core.Views.pdb
 C:\Storage\C\The-Wall-With-DotNet-Core\obj\Debug\netcoreapp2.1\The-Wall-With-DotNet-Core.Views.pdb
 C:\Storage\C\The-Wall-With-DotNet-Core\obj\Debug\netcoreapp2.1\The-Wall-With-DotNet-Core.csproj.CopyComplete
+C:\Storage\C\The-Wall-With-DotNet-Core\obj\Debug\netcoreapp2.1\Razor\Views\Authentication\Index.g.cshtml.cs
