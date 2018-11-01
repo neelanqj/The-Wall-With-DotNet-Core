@@ -1,11 +1,14 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    ViewData["Heading"] ="Coding Dojo Wall";
 }
+
+<partial name="/Views/Shared/_Navigation.cshtml"/>
 
 <form action="/createmessage" method="POST">
     <div class="row">
-        <div class="col-md-12">
-            <textarea name="content"></textarea>
+        <div class="col-md-10">
+            <textarea name="content" style="min-width: 100%"></textarea>
         </div>
     </div>
     <div class="row">
@@ -35,7 +38,7 @@
             @:<div class="col-md-2"></div>
             @:<div class="col-md-8">
                 @:Post a comment:<br/>
-                @:<textarea name="content"></textarea>
+                @:<textarea name="content" style="min-width: 100%"></textarea>
             @:</div>
         @:</div>
             @:<div class="row">
