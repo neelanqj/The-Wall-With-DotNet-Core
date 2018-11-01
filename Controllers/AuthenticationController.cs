@@ -13,13 +13,14 @@ namespace Extensions.Authentication
     {
         private const string mainPortal = "/wall";
         private const string loginPage ="/";
+        private const string loginView ="Index";
         private MyDbContext _dbContext;
         private UserSessionWrapper _USW;
 
         
         public AuthenticationController(MyDbContext context){
             _dbContext=context;
-            _USW = new UserSessionWrapper(HttpContext);
+            _USW = new UserSessionWrapper();
         }
 
         [HttpGet]
@@ -44,7 +45,7 @@ namespace Extensions.Authentication
                     ModelState.AddModelError("Email", "Email already in use!");
                     
                     // You may consider returning to the View at this point
-                    return View();
+                    return View(loginView);
                 }
 
                 PasswordHasher<User> Hasher = new PasswordHasher<User>();
@@ -52,13 +53,13 @@ namespace Extensions.Authentication
                 User newUser =_dbContext.Add(user).Entity;
                 _dbContext.SaveChanges();
 
-                _USW.SetSessionUser(newUser.UserId);
+                _USW.SetSessionUser(newUser.UserId, HttpContext);
                 
                 return Redirect(mainPortal);
             }
 
             // other code
-            return View();
+            return View(loginView);
         } 
 
         [HttpPost]
@@ -71,7 +72,7 @@ namespace Extensions.Authentication
                 if(userInDb == null || userSubmission.Password == null)
                 {
                     ModelState.AddModelError("Email", "Invalid Email/Password");
-                    return View(loginPage);
+                    return View(loginView);
                 }
                 
                 // Initialize hasher object
@@ -84,14 +85,14 @@ namespace Extensions.Authentication
                 if(result == 0)
                 {
                     ModelState.AddModelError("Password", "Invalid Email/Password");
-                    return View(loginPage);
+                    return View(loginView);
                 }
                 
                 HttpContext.Session.SetInt32("User", userInDb.UserId);
                 return Redirect(mainPortal);
             }
 
-            return View(loginPage);
+            return View(loginView);
         }
 
         [Route("/logout")]

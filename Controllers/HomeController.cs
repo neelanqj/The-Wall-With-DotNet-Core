@@ -20,7 +20,7 @@ namespace The_Wall_With_DotNet_Core.Controllers
         private UserSessionWrapper _USW;
         public HomeController(MyDbContext context){
             _dbContext = context;
-            _USW = new UserSessionWrapper(HttpContext);
+            _USW = new UserSessionWrapper();
         }
 
         [Route("/wall")]
@@ -41,21 +41,21 @@ namespace The_Wall_With_DotNet_Core.Controllers
         [Route("/createmessage")]
         [ServiceFilter(typeof(LoggedInAttribute))]
         public IActionResult CreateMessage(Message message){
-            message.UserId =  _USW.GetSessionUser();
+            message.UserId =  _USW.GetSessionUser(HttpContext);
             _dbContext.Add(message);
             _dbContext.SaveChanges();
 
-            return View();
+            return Redirect("/wall");
         }
 
         [Route("/createcomment")]
         [ServiceFilter(typeof(LoggedInAttribute))]
         public IActionResult CreateComment(Comment comment) {
-            comment.UserId = _USW.GetSessionUser();
+            comment.UserId = _USW.GetSessionUser(HttpContext);
             _dbContext.Add(comment);
             _dbContext.SaveChanges();
 
-            return View();
+            return  Redirect("/wall");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
